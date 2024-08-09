@@ -1,6 +1,5 @@
 import Customer from "@/models/customer";
 import { connectToDB } from "@/utils/database";
-import { NextResponse } from "next/server";
 
 export const GET = async () => {
     try {
@@ -9,8 +8,8 @@ export const GET = async () => {
         const customers = await Customer.find({});
 
         
-        return NextResponse.json( customers, {status: 200});
+        return new Response(JSON.stringify(customers), { status: 200 });
     } catch (error) {
-        return NextResponse.json('Failed to fetch customers', {status: 500});
+        return new Response("Failed to fetch all customers", { status: 500 });
     }
 }
