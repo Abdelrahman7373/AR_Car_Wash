@@ -28,17 +28,17 @@ const AddCustomerModel = ({isOpen, onClose, type, isSubmitting, customer, handle
                     <br />
                     <div className='flex flex-col space-y-5'>
                         <h1 className='text-lg text-gray-800'>Name</h1>
-                        <Input onChange={(e) => setCustomer({...customer, name: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
+                        <Input name='name' onChange={(e) => setCustomer({...customer, name: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
                     </div>
                     <br />
                     <div className='flex flex-col space-y-5'>
                         <h1 className='text-lg text-gray-800'>Phone Number</h1>
-                        <Input onChange={(e) => setCustomer({...customer, phoneNumber: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
+                        <Input name='phoneNumber' onChange={(e) => setCustomer({...customer, phoneNumber: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
                     </div>
                     <br />
                     <div className='flex flex-col space-y-5'>
                         <h1 className='text-lg text-gray-800'>Car Model</h1>
-                        <Input onChange={(e) => setCustomer({...customer, carModel: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
+                        <Input name='carModel' onChange={(e) => setCustomer({...customer, carModel: e.target.value})} disabled={isSubmitting} className='md:w-[28rem] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 max-sm:w-[22rem]' />
                     </div>
                     <br />
                     <Button type='submit' onClick={handleSubmit} disabled={isSubmitting} className='bg-cyan-400 hover:bg-cyan-300 text-lg'>

@@ -6,6 +6,8 @@ import CustomerCard from './CustomerCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 
+
+
 const CustomerCardList = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [isOpenEdit, setIsOpenEdit] = useState(false);
@@ -47,7 +49,7 @@ const CustomerCardList = () => {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      const response = await fetch('/api/customer/');
+      const response = await fetch('/api/customer', {method: 'GET'});
       const data = await response.json();
 
       setCustomers(data);
@@ -65,5 +67,6 @@ const CustomerCardList = () => {
     </div>
   )
 }
+
 
 export default CustomerCardList;
