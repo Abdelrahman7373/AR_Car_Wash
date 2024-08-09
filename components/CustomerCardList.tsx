@@ -48,14 +48,34 @@ const CustomerCardList = () => {
 
 
   useEffect(() => {
+    let isMounted = true; // Track whether the component is still mounted
+  
     const fetchCustomers = async () => {
-      const response = await fetch('/api/customer', {method: 'GET'});
-      const data = await response.json();
-
-      setCustomers(data);
-    }
-
+      try {
+        const response = await fetch('/api/customer', { method: 'GET' });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+  
+        if (isMounted) {
+          setCustomers(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch customers:', error);
+        if (isMounted) {
+          setCustomers([]); // Optionally, set to an empty array or show an error state
+        }
+      }
+    };
+  
     fetchCustomers();
+  
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
 
