@@ -52,7 +52,7 @@ const CustomerCardList = () => {
   
     const fetchCustomers = async () => {
       try {
-        const response = await fetch('/api/customer', { method: 'GET' });
+        const response = await fetch(`/api/customer?_=${new Date().getTime()}`, { method: 'GET' });
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
