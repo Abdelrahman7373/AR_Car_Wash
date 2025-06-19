@@ -1,7 +1,7 @@
 'use client';
 
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import CustomerCard from './CustomerCard';
 import { useRouter, useSearchParams } from 'next/navigation';
 
