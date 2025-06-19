@@ -2,6 +2,8 @@ import Customer from "@/models/customer";
 import { connectToDB } from "@/utils/database";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 
 interface Params {
     id: string;
