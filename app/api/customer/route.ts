@@ -2,6 +2,8 @@ import Customer from "@/models/customer";
 import { connectToDB } from "@/utils/database";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async () => {
     try {
         await connectToDB();
@@ -9,7 +11,9 @@ export const GET = async () => {
         const customers = await Customer.find({});
 
         
-        return NextResponse.json( customers, {status: 200});
+        const response = NextResponse.json(customers, { status: 200 });
+        response.headers.set("Cache-Control", "no-store");
+        return response;
     } catch (error) {
         return NextResponse.json('Failed to fetch customers', {status: 500});
     }
