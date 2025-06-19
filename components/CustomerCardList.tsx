@@ -15,6 +15,7 @@ const CustomerCardList = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const [customer, setCustomer] = useState({ name: '', phoneNumber: '', carModel: '',});
+  const previousDataRef = useRef(null);
 
 
   const handleEditOpen = (customer: any) => {
@@ -48,35 +49,27 @@ const CustomerCardList = () => {
 
 
   useEffect(() => {
-    let isMounted = true; // Track whether the component is still mounted
-  
+    let isMounted = true;
+
     const fetchCustomers = async () => {
       try {
-        const response = await fetch(`/api/customer?_=${new Date().getTime()}`, { method: 'GET' });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
+        const response = await fetch(`/api/customer?_=${Date.now()}`, { method: 'GET' });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const data = await response.json();
-  
-        if (isMounted) {
+
+        const hasChanged = previousDataRef.current === null || JSON.stringify(previousDataRef.current) !== JSON.stringify(data);
+
+        if (isMounted && hasChanged) {
+          previousDataRef.current = data;
           setCustomers(data);
         }
       } catch (error) {
         console.error('Failed to fetch customers:', error);
-        if (isMounted) {
-          setCustomers([]); // Optionally, set to an empty array or show an error state
-        }
+        if (isMounted) setCustomers([]);
       }
     };
-  
-    fetchCustomers();
-  
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
 
   return (
