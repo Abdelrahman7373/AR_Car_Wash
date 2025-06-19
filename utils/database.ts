@@ -1,22 +1,34 @@
 //@ts-nocheck
 
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-let isConnected = false;
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 export const connectToDB = async () => {
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
     mongoose.set('strictQuery', true);
+    cached.promise = mongoose
+      .connect(process.env.MONGODB_URI!, {
+        dbName: 'AR_Car_Wash',
+        bufferCommands: false,
+      })
+      .then((mongoose) => {
+        console.log('MongoDB connected ✅');
+        return mongoose;
+      })
+      .catch((err) => {
+        console.error('MongoDB connection error ❌:', err);
+      });
+  }
 
-    if(isConnected) {
-        console.log('Mongodb is already connected');
-        return;
-    }
-
-    try {
-        await mongoose.connect(process.env.MONGODB_URI, {dbName: 'AR_Car_Wash'});
-        isConnected = true;
-        console.log('Mongodb is connected');
-    } catch (error) {
-        console.log(error);
-    }
+  cached.conn = await cached.promise;
+  return cached.conn;
 };
