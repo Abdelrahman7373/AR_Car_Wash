@@ -71,6 +71,15 @@ const CustomerCardList = () => {
       }
     };
 
+    fetchCustomers();
+    const interval = setInterval(fetchCustomers, 13000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
 
   return (
     <div className='grid md:grid-cols-3 gap-4 max-sm:grid-cols-1 gap-y-10 md:gap-x-10'>
