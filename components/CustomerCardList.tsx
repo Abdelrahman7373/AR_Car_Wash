@@ -46,16 +46,17 @@ const CustomerCardList = () => {
   };
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     let isMounted = true;
 
     const fetchCustomers = async () => {
       try {
-        const response = await fetch(`/api/customer?_=${Date.now()}`, { method: 'GET' });
+        const response = await fetch(`${window.location.origin}/api/customer?_=${Date.now()}`, {cache: 'no-store', headers: {'x-requested-from': 'my-frontend'}});
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
-
         const hasChanged = previousDataRef.current === null || JSON.stringify(previousDataRef.current) !== JSON.stringify(data);
 
         if (isMounted && hasChanged) {
@@ -76,6 +77,7 @@ const CustomerCardList = () => {
       clearInterval(interval);
     };
   }, []);
+
   
   
 
