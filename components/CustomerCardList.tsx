@@ -1,9 +1,9 @@
 'use client';
 
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react'
 import CustomerCard from './CustomerCard';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 
 
@@ -13,14 +13,12 @@ const CustomerCardList = () => {
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-  const [customer, setCustomer] = useState({ name: '', phoneNumber: '', carModel: '',});
+  const [customer, setCustomer] = useState({ name: '', phoneNumber: '', carModel: ''});
   const previousDataRef = useRef(null);
 
 
   const handleEditOpen = (customer: any) => {
     setIsOpenEdit(true);
-    router.push(`?id=${customer._id}`);
   };
 
   const customerId = useSearchParams().get('id');
@@ -39,14 +37,13 @@ const CustomerCardList = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsSubmitting(false);    
-      window.location.reload();
+      setIsSubmitting(false);
     }
   }
 
   const handleDelete = async () => {
+    const hasConfirmed = confirm("Are you sure you want to delete this customer data permanently");
   };
-
 
   useEffect(() => {
     let isMounted = true;
@@ -79,6 +76,8 @@ const CustomerCardList = () => {
       clearInterval(interval);
     };
   }, []);
+  
+  
 
 
   return (
