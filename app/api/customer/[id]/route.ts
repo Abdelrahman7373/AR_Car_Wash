@@ -1,6 +1,7 @@
 import Customer from "@/models/customer";
 import { connectToDB } from "@/utils/database";
 import { NextRequest, NextResponse } from "next/server";
+import { sha256 } from "@/utils/hash";
 
 
 interface Params {
@@ -10,8 +11,9 @@ interface Params {
 
 export const GET = async (req: NextRequest, {params}: {params: Params}) => {
     const requestedFrom = req.headers.get("x-requested-from");
+    const secretKey = await sha256(Math.floor(Date.now() / 4000).toString());
     
-    if (requestedFrom !== "my-frontend") {
+    if (requestedFrom !== secretKey) {
         return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
     }
 
@@ -31,8 +33,9 @@ export const GET = async (req: NextRequest, {params}: {params: Params}) => {
 export const PATCH = async (req: NextRequest, {params}: {params: Params}) => {
     const { name, phoneNumber, carModel } = await req.json();
     const requestedFrom = req.headers.get("x-requested-from");
+    const secretKey = await sha256(Math.floor(Date.now() / 4000).toString());
     
-    if (requestedFrom !== "my-frontend") {
+    if (requestedFrom !== secretKey) {
         return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
     }
 
@@ -56,8 +59,9 @@ export const PATCH = async (req: NextRequest, {params}: {params: Params}) => {
 
 export const DELETE = async (req: NextRequest, {params}: {params: Params}) => {
     const requestedFrom = req.headers.get("x-requested-from");
+    const secretKey = await sha256(Math.floor(Date.now() / 4000).toString());
     
-    if (requestedFrom !== "my-frontend") {
+    if (requestedFrom !== secretKey) {
         return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
     }
 
