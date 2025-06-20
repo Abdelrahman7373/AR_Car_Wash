@@ -1,15 +1,13 @@
 import { Dispatch, SetStateAction } from 'react';
-import AddCustomerModel from './AddCustomerModel';
 import { Card, CardHeader, CardTitle } from './ui/card';
 import Image from 'next/image';
 
 
-interface Customer {name: string, phoneNumber: string, carModel: string,}
+interface Customer {name: string, phoneNumber: string, carModel: string, _id: string}
 
 
 interface CustomerCardProps {
   customer: Customer;
-  updateCustomer: (e: React.MouseEvent<HTMLButtonElement>) => void;
   handleEditOpen: (customer: any) => void;
   handleDelete: () => void;
   isOpenEdit: boolean;
@@ -23,7 +21,7 @@ interface CustomerCardProps {
 
 
 
-const CustomerCard = ({ customer, updateCustomer, handleDelete, isOpenEdit, setIsOpenEdit, handleEditOpen, isSubmitting, setIsSubmitting, setIsOpenDelete, isOpenDelete, setCustomer }: CustomerCardProps) => {
+const CustomerCard = ({ customer,  handleDelete, isOpenEdit, setIsOpenEdit, handleEditOpen, isSubmitting, setIsSubmitting, setIsOpenDelete, isOpenDelete, setCustomer }: CustomerCardProps) => {
   return (
     <div>
       <Card>
@@ -31,7 +29,7 @@ const CustomerCard = ({ customer, updateCustomer, handleDelete, isOpenEdit, setI
           <div className='flex items-center justify-between'>
             <h1 className='text-lg flex-grow'>{customer.name}</h1>
             <CardTitle>
-              <Image onClick={handleEditOpen} className='cursor-pointer' alt='Edit' src='/edit.png' width={30} height={30} />
+              <Image onClick={() => handleEditOpen(customer)} className='cursor-pointer' alt='Edit' src='/edit.png' width={30} height={30} />
             </CardTitle>
           </div>
           <h1 className='text-cyan-500 text-lg mt-2'>{customer.phoneNumber}</h1>
@@ -43,9 +41,8 @@ const CustomerCard = ({ customer, updateCustomer, handleDelete, isOpenEdit, setI
           </div>
         </CardHeader>
       </Card>
-      <AddCustomerModel isOpen={isOpenEdit === true} onClose={() => setIsOpenEdit(false)} type='Edit' handleSubmit={updateCustomer} customer={customer} isSubmitting={isSubmitting} setCustomer={setCustomer} />
     </div>
   )
 }
 
-export default CustomerCard
+export default CustomerCard;
