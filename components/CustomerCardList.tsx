@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import CustomerCard from './CustomerCard';
 import EditCustomer from './EditCustomer';
+import { sha256 } from '@/utils/hash';
 
 interface Customer {
   name: string
@@ -35,12 +36,13 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
   const updateCustomer = async (e: React.MouseEvent<HTMLButtonElement>, customer: Customer) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const value = await sha256(Math.floor(Date.now() / 4000).toString());
 
     try {
       const response = await fetch(`/api/customer/${customer._id.toString()}`, {
         method: 'PATCH',
         body: JSON.stringify({name: customer.name, phoneNumber: customer.phoneNumber, carModel: customer.carModel}),
-        headers: { 'x-requested-from': 'my-frontend' },
+        headers: { 'x-requested-from': value },
       });
 
       if(response.ok) setIsOpenEdit(false);
@@ -54,10 +56,11 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
 
   const handleDelete = async (customer: Customer) => {
     const hasConfirmed = confirm("Are you sure you want to delete this customer data permanently");
+    const value = await sha256(Math.floor(Date.now() / 4000).toString());
 
     if(hasConfirmed) {
       try {
-        await fetch(`/api/customer/${customer._id.toString()}`, {method: 'DELETE', headers: { 'x-requested-from': 'my-frontend' },});
+        await fetch(`/api/customer/${customer._id.toString()}`, {method: 'DELETE', headers: { 'x-requested-from': value },});
 
         const filteredCustomers = customers.filter((c) => c._id !== customer._id);
         setCustomers(filteredCustomers);
