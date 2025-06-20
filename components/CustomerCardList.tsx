@@ -39,7 +39,8 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
     try {
       const response = await fetch(`/api/customer/${customer._id.toString()}`, {
         method: 'PATCH',
-        body: JSON.stringify({name: customer.name, phoneNumber: customer.phoneNumber, carModel: customer.carModel})
+        body: JSON.stringify({name: customer.name, phoneNumber: customer.phoneNumber, carModel: customer.carModel}),
+        headers: { 'x-requested-from': 'my-frontend' },
       });
 
       if(response.ok) setIsOpenEdit(false);
@@ -56,7 +57,7 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
 
     if(hasConfirmed) {
       try {
-        await fetch(`/api/customer/${customer._id.toString()}`, {method: 'DELETE'});
+        await fetch(`/api/customer/${customer._id.toString()}`, {method: 'DELETE', headers: { 'x-requested-from': 'my-frontend' },});
 
         const filteredCustomers = customers.filter((c) => c._id !== customer._id);
         setCustomers(filteredCustomers);
