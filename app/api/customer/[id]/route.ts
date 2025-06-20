@@ -2,8 +2,6 @@ import Customer from "@/models/customer";
 import { connectToDB } from "@/utils/database";
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-
 
 interface Params {
     id: string;
@@ -11,6 +9,13 @@ interface Params {
 
 
 export const GET = async (req: NextRequest, {params}: {params: Params}) => {
+    const requestedFrom = req.headers.get("x-requested-from");
+    
+    if (requestedFrom !== "my-frontend") {
+        return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
+    }
+
+
     try {
         await connectToDB();
 
@@ -25,6 +30,11 @@ export const GET = async (req: NextRequest, {params}: {params: Params}) => {
 
 export const PATCH = async (req: NextRequest, {params}: {params: Params}) => {
     const { name, phoneNumber, carModel } = await req.json();
+    const requestedFrom = req.headers.get("x-requested-from");
+    
+    if (requestedFrom !== "my-frontend") {
+        return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
+    }
 
     try {
         await connectToDB();
@@ -45,6 +55,12 @@ export const PATCH = async (req: NextRequest, {params}: {params: Params}) => {
 };
 
 export const DELETE = async (req: NextRequest, {params}: {params: Params}) => {
+    const requestedFrom = req.headers.get("x-requested-from");
+    
+    if (requestedFrom !== "my-frontend") {
+        return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
+    }
+
     try {
         await connectToDB();
 
