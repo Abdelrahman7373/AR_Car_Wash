@@ -1,34 +1,43 @@
-'use client';
-
-
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import CustomerCard from './CustomerCard';
-import { useSearchParams } from 'next/navigation';
+import EditCustomer from './EditCustomer';
+
+interface Customer {
+  name: string
+  phoneNumber: string
+  carModel: string
+  _id: string
+}
+
+interface CustomerCardListProps {
+  customers: Customer[];
+  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
+  triggerRefresh: () => void;
+  searchText: string;
+}
 
 
 
 
-const CustomerCardList = () => {
-  const [customers, setCustomers] = useState<any[]>([]);
+const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText }: CustomerCardListProps) => {
   const [isOpenEdit, setIsOpenEdit] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [customer, setCustomer] = useState({ name: '', phoneNumber: '', carModel: ''});
-  const previousDataRef = useRef(null);
+  const [customer, setCustomer] = useState({ name: '', phoneNumber: '', carModel: '', _id: ''});
 
 
-  const handleEditOpen = (customer: any) => {
+  const handleEditOpen = (customer: Customer) => {
+    setCustomer(customer);
     setIsOpenEdit(true);
   };
 
-  const customerId = useSearchParams().get('id');
 
-  const updateCustomer = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const updateCustomer = async (e: React.MouseEvent<HTMLButtonElement>, customer: Customer) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/customer/${customerId}`, {
+      const response = await fetch(`/api/customer/${customer._id.toString()}`, {
         method: 'PATCH',
         body: JSON.stringify({name: customer.name, phoneNumber: customer.phoneNumber, carModel: customer.carModel})
       });
@@ -38,45 +47,24 @@ const CustomerCardList = () => {
       console.log(error);
     } finally {
       setIsSubmitting(false);
+      triggerRefresh();
     }
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async (customer: Customer) => {
     const hasConfirmed = confirm("Are you sure you want to delete this customer data permanently");
-  };
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    let isMounted = true;
-
-    const fetchCustomers = async () => {
+    if(hasConfirmed) {
       try {
-        const response = await fetch(`${window.location.origin}/api/customer?_=${Date.now()}`, {cache: 'no-store', headers: {'x-requested-from': 'my-frontend'}});
+        await fetch(`/api/customer/${customer._id.toString()}`, {method: 'DELETE'});
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const data = await response.json();
-        const hasChanged = previousDataRef.current === null || JSON.stringify(previousDataRef.current) !== JSON.stringify(data);
-
-        if (isMounted && hasChanged) {
-          previousDataRef.current = data;
-          setCustomers(data);
-        }
+        const filteredCustomers = customers.filter((c) => c._id !== customer._id);
+        setCustomers(filteredCustomers);
       } catch (error) {
-        console.error('Failed to fetch customers:', error);
-        if (isMounted) setCustomers([]);
+        console.log(error);
       }
-    };
-
-    fetchCustomers();
-    const interval = setInterval(fetchCustomers, 13000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
-  }, []);
+    }
+  };
 
   
   
@@ -84,9 +72,17 @@ const CustomerCardList = () => {
 
   return (
     <div className='grid md:grid-cols-3 gap-4 max-sm:grid-cols-1 gap-y-10 md:gap-x-10'>
-        {customers.map((customer) => (
-            <CustomerCard key={customer._id} customer={customer} updateCustomer={updateCustomer} handleEditOpen={handleEditOpen} handleDelete={handleDelete} isOpenDelete={isOpenDelete} isOpenEdit={isOpenEdit} setCustomer={setCustomer} setIsOpenDelete={setIsOpenDelete} setIsOpenEdit={setIsOpenEdit} setIsSubmitting={setIsSubmitting} isSubmitting={isSubmitting} />
-        ))}
+      {customers.filter((customer) => {
+        const text = searchText.toLowerCase();
+        return(
+          customer.name.toLowerCase().includes(text) ||
+          customer.phoneNumber.toLowerCase().includes(text) ||
+          customer.carModel.toLowerCase().includes(text)
+        )
+      }).map((customer) => (
+        <CustomerCard key={customer._id} customer={customer} handleEditOpen={handleEditOpen} handleDelete={() => handleDelete(customer)} isOpenDelete={isOpenDelete} isOpenEdit={isOpenEdit} setCustomer={setCustomer} setIsOpenDelete={setIsOpenDelete} setIsOpenEdit={setIsOpenEdit} setIsSubmitting={setIsSubmitting} isSubmitting={isSubmitting} />
+      ))}
+        <EditCustomer isOpen={isOpenEdit === true} onClose={() => setIsOpenEdit(false)} type='Edit' handleSubmit={(e) => updateCustomer(e, customer)} customer={customer} isSubmitting={isSubmitting} setCustomer={setCustomer} />
     </div>
   )
 }
