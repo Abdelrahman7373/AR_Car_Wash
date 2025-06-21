@@ -36,7 +36,7 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
   const updateCustomer = async (e: React.MouseEvent<HTMLButtonElement>, customer: Customer) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const value = await sha256(Math.floor(Date.now() / 5000).toString());
+    const value = await sha256(Math.floor(Date.now() / 7000).toString());
 
     try {
       const response = await fetch(`/api/customer/${customer._id.toString()}`, {
@@ -56,7 +56,7 @@ const CustomerCardList = ({ customers, setCustomers, triggerRefresh, searchText 
 
   const handleDelete = async (customer: Customer) => {
     const hasConfirmed = confirm("Are you sure you want to delete this customer data permanently");
-    const value = await sha256(Math.floor(Date.now() / 5000).toString());
+    const value = await sha256(Math.floor(Date.now() / 7000).toString());
 
     if(hasConfirmed) {
       try {
