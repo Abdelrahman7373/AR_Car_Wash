@@ -2,8 +2,11 @@ import {  useEffect, useState } from 'react';
 import CustomerCardList from './CustomerCardList';
 import Navbar from './Navbar';
 import Search from './Search';
+import { sha256 } from '@/utils/hash';
 
 interface Customer {name: string, phoneNumber: string, carModel: string, _id: string}
+
+
 
 const DataPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -13,7 +16,8 @@ const DataPage = () => {
     if (typeof window === 'undefined') return;
 
     try {
-      const response = await fetch(`${window.location.origin}/api/customer?_=${Date.now()}`,{cache: 'no-store',headers: { 'x-requested-from': 'my-frontend' },});
+      const value = await sha256(Math.floor(Date.now() / 4000).toString());
+      const response = await fetch(`${window.location.origin}/api/customer?_=${Date.now()}`,{cache: 'no-store',headers: { 'x-requested-from': value, },});
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
