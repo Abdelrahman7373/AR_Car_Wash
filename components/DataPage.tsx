@@ -16,7 +16,7 @@ const DataPage = () => {
     if (typeof window === 'undefined') return;
 
     try {
-      const value = await sha256(Math.floor(Date.now() / 5000).toString());
+      const value = await sha256(Math.floor(Date.now() / 7000).toString());
       const response = await fetch(`${window.location.origin}/api/customer?_=${Date.now()}`,{cache: 'no-store',headers: { 'x-requested-from': value, },});
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
