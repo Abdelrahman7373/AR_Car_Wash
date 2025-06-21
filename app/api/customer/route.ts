@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const GET = async (req: Request) => {
   const requestedFrom = req.headers.get("x-requested-from");
-  const secretKey = await sha256(Math.floor(Date.now() / 4000).toString());
+  const secretKey = await sha256(Math.floor(Date.now() / 5000).toString());
 
   if (requestedFrom !== secretKey) {
     return NextResponse.json({ message: "Forbidden to access this content" }, { status: 403 });
